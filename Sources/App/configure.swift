@@ -1,33 +1,44 @@
-import FluentSQLite
+import FluentMySQL
 import Vapor
+
+extension DatabaseIdentifier {
+    static var mysql: DatabaseIdentifier<MySQLDatabase> {
+        return .init("Pump")
+    }
+}
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
-    /// Register providers first
-    try services.register(FluentSQLiteProvider())
-
-    /// Register routes to the router
+    try services.register(FluentMySQLProvider())
     let router = EngineRouter.default()
     try routes(router)
     services.register(router, as: Router.self)
-
-    /// Register middleware
-    var middlewares = MiddlewareConfig() // Create _empty_ middleware config
-    /// middlewares.use(FileMiddleware.self) // Serves files from `Public/` directory
-    middlewares.use(ErrorMiddleware.self) // Catches errors and converts to HTTP response
+    var middlewares = MiddlewareConfig()
+    
+    middlewares.use(ErrorMiddleware.self)
     services.register(middlewares)
-
-    // Configure a SQLite database
-    let sqlite = try SQLiteDatabase(storage: .memory)
-
-    /// Register the configured SQLite database to the database config.
     var databases = DatabasesConfig()
-    databases.add(database: sqlite, as: .sqlite)
+    // Step 3
+    let mysqlConfig = MySQLDatabaseConfig(hostname: "localhost", port: 3306, username: "golden", password: "password", database: "Pump")
+    let database = MySQLDatabase(config: mysqlConfig)
+    databases.add(database: database, as: .pump)
+
     services.register(databases)
 
-    /// Configure migrations
     var migrations = MigrationConfig()
-    migrations.add(model: Todo.self, database: .sqlite)
+    Workout.defaultDatabase = DatabaseIdentifier<MySQLDatabase>.pump as DatabaseIdentifier<MySQLDatabase> 
+    migrations.add(migration: Curator.self, database: .pump)
+    migrations.add(migration: Workout.self, database: .pump)
+    migrations.add(model: Superset.self, database: .pump)
+    migrations.add(model: WorkoutSupersetPivot.self, database: .pump)
     services.register(migrations)
 
 }
+
+extension DatabaseIdentifier{
+    static var pump: DatabaseIdentifier<MySQLDatabase> {
+        return .init("Pump")
+    }
+}
+
+
