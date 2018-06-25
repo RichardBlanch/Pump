@@ -6,10 +6,18 @@ final class Curator: Codable {
     var id: UUID?
     var name: String!
     var image: String!
+    var workoutsArray: [Workout]?
 
     init(name: String, image: String) {
         self.name = name
         self.image = image
+    }
+
+    static func setWorkouts(for curator: Curator, with conn: MySQLConnection) throws -> Future<Curator> {
+        return try curator.workouts.query(on: conn).all().map(to: Curator.self) { workouts in
+            curator.workoutsArray = workouts
+            return curator
+        }
     }
 }
 
