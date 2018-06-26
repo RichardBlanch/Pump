@@ -7,6 +7,7 @@ public func routes(_ router: Router) throws {
     routeContainer.addRoute(CuratorController())
     routeContainer.addRoute(WorkoutController())
     routeContainer.addRoute(SupersetController())
+    routeContainer.addRoute(WorkoutSetController())
 
 
     routeContainer.registerRoutes(for: router)

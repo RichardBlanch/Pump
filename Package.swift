@@ -8,10 +8,13 @@ let package = Package(
         // 1
         .package(url: "https://github.com/vapor/fluent-mysql.git",
                  from: "3.0.0-rc"),
+        .package(url: "https://github.com/RichardBlanch/Models.git",
+                 from: "1.0.0"),
         ], targets: [
             // 2
             .target(name: "App", dependencies: ["FluentMySQL",
-                                                "Vapor"]),
+                                                "Vapor",
+                                                "Models"]),
             .target(name: "Run", dependencies: ["App"]),
             .testTarget(name: "AppTests", dependencies: ["App"]),
             ]

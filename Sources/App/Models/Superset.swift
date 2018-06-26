@@ -11,6 +11,7 @@ import Vapor
 final class Superset: Codable {
     var id: UUID?
     var identifier: String!
+    var workoutSets: [WorkoutSet]?
 
     var workouts: Siblings<Superset, Workout, WorkoutSupersetPivot> {
         return siblings()
@@ -20,6 +21,22 @@ final class Superset: Codable {
         self.identifier = identifier
     }
 }
+
+extension Superset: Equatable {
+    static func == (lhs: Superset, rhs: Superset) -> Bool {
+        return lhs.id == rhs.id && lhs.identifier == rhs.identifier
+    }
+}
+
+extension Superset {
+    var childrenWorkoutSets: Children<Superset, WorkoutSet> {
+        return children(\.supersetID)
+    }
+}
+
+
+
+
 
 extension Superset: MySQLUUIDModel {}
 extension Superset: Migration {}

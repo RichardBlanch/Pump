@@ -6,6 +6,17 @@ final class Workout: Codable {
     var name: String!
     var bodyPart: String!
     var curatorID: Curator.ID
+    var superset: [Superset]?
+    var sets: [[WorkoutSet]]?
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+
+        id = try values.decode(UUID.self, forKey: .id)
+        name = try values.decode(String.self, forKey: .name)
+        bodyPart = try values.decode(String.self, forKey: .bodyPart)
+        curatorID = try values.decode(UUID.self, forKey: .curatorID)
+    }
 
     var supersets: Siblings<Workout, Superset, WorkoutSupersetPivot> {
         return siblings()
@@ -33,5 +44,10 @@ extension Workout: Migration {
         })
     }
 }
-extension Workout: Content { }
+extension Workout: RequestDecodable {
+    static func decode(from req: Request) throws -> Future<Workout> {
+        abort()
+    }
+}
+extension Workout: Content {}
 extension Workout: Parameter { }

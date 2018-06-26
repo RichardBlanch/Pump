@@ -15,9 +15,11 @@ struct WorkoutController: RouteCollection {
 
         workoutRotes.get(use: allWorkouts)
         workoutRotes.get(Workout.parameter, "supersets", use: getSupersets)
+        workoutRotes.get(Workout.parameter, use: getHandler)
         workoutRotes.post(Workout.self, use: createWorkout)
         workoutRotes.put(Workout.parameter, use: updateHandler)
         workoutRotes.post(Workout.parameter, "superset", Superset.parameter, use: addSupersetHandler)
+        workoutRotes.get(Workout.parameter, "payload", use: workoutPayload)
     }
 
     // MARK: - Handlers
@@ -27,6 +29,24 @@ struct WorkoutController: RouteCollection {
             return Workout.query(on: conn).all()
         }
     }
+
+    func getHandler(_ req: Request) throws -> Future<Workout> {
+        return req.withPooledConnection(to: .pump, closure: { connection in
+            try req.parameters.next(Workout.self).map({ workout in
+                return workout
+            })
+        })
+    }
+
+    func workoutPayload(_ req: Request) -> Future<WorkoutPayload> {
+        return req.withPooledConnection(to: .pump, closure: { conn in
+            try req.parameters.next(Workout.self).flatMap({ workout in
+                return try workout.workoutPayload(for: conn)
+            })
+        })
+    }
+
+
 
     private func createWorkout(from req: Request, workout: Workout) throws -> Future<Workout> {
         return req.withPooledConnection(to: .pump) { conn in

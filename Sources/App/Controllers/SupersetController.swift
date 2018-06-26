@@ -15,6 +15,7 @@ struct SupersetController: RouteCollection {
 
         superSetRoute.get(use: getAllSupersets)
         superSetRoute.post(Superset.self, use: createSuperset)
+        superSetRoute.get(Superset.parameter, "sets", use: getWorkoutSets)
 
         // Workout routes
         superSetRoute.get(Superset.parameter, "workouts", use: getWorkouts)
@@ -45,6 +46,18 @@ struct SupersetController: RouteCollection {
                     try superset.workouts.query(on: req).all()
             }
         })
+    }
+
+    // MARK: - WorkoutSets
+
+    func getWorkoutSets(_ req: Request) throws -> Future<[WorkoutSet]> {
+        return req.withPooledConnection(to: .pump) { conn in
+            return try req.parameters.next(Superset.self).flatMap(to: [WorkoutSet].self) { try $0.childrenWorkoutSets.query(on: conn).all() }
+        }
+
+//        return try req.parameters(Superset.self).flatMap(to: [WorkoutSet].self) { superSet in
+//            try superSet.workoutSets.query(on: req).all()
+//        }
     }
 }
 

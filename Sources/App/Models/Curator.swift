@@ -13,12 +13,7 @@ final class Curator: Codable {
         self.image = image
     }
 
-    static func setWorkouts(for curator: Curator, with conn: MySQLConnection) throws -> Future<Curator> {
-        return try curator.workouts.query(on: conn).all().map(to: Curator.self) { workouts in
-            curator.workoutsArray = workouts
-            return curator
-        }
-    }
+
 }
 
 extension Curator {

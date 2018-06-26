@@ -1,6 +1,7 @@
 import FluentMySQL
 import Vapor
 import Fluent
+// import Models
 
 struct CuratorController: RouteCollection {
     func boot(router: Router) throws {
@@ -21,9 +22,9 @@ struct CuratorController: RouteCollection {
 
     private func firstCurator(_ req: Request) throws -> Future<Curator> {
         return req.withPooledConnection(to: .pump, closure: { conn in
-            return Curator.query(on: conn).first().flatMap({ cur in
-                guard let cur = cur else { throw Abort(.notFound) }
-                return try Curator.setWorkouts(for: cur, with: conn)
+            return Curator.query(on: conn).first().map({ cur in
+                guard let cur = cur else { abort() }
+                return cur
             })
         })
     }
