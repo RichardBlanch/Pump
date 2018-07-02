@@ -49,7 +49,7 @@ private func databaseConfig() -> MySQLDatabaseConfig {
     let databaseName = Environment.get("DATABASE_DB") ?? "Pump"
     let password = Environment.get("DATABASE_PASSWORD") ?? "password"
 
-     return MySQLDatabaseConfig(hostname: username, port: 3306, username: username, password: password, database: databaseName)
+     return MySQLDatabaseConfig(hostname: hostname, port: 3306, username: username, password: password, database: databaseName)
 }
 
 extension DatabaseIdentifier{
