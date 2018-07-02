@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import FluentMySQL
+import PumpModels
 
 final class WorkoutSupersetPivot: MySQLUUIDPivot {
     static let leftIDKey: WritableKeyPath<WorkoutSupersetPivot, UUID> = \.workoutID
@@ -31,9 +32,8 @@ extension WorkoutSupersetPivot: Migration {
         return Database.create(self, on: connection, closure: { builder in
             try addProperties(to: builder)
 
-            try builder.addReference(from: \.workoutID, to: \Workout.id)
-            try builder.addReference(from: \.supersetID, to: \Superset.id)
-
+             builder.reference(from: \.workoutID, to: \Workout.id)
+             builder.reference(from: \.supersetID, to: \Superset.id)
         })
     }
 }

@@ -1,5 +1,7 @@
 import FluentMySQL
 import Vapor
+import PumpModels
+import Authentication
 
 extension DatabaseIdentifier {
     static var mysql: DatabaseIdentifier<MySQLDatabase> {
@@ -24,14 +26,20 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     databases.add(database: database, as: .pump)
 
     services.register(databases)
+    try services.register(AuthenticationProvider())
 
     var migrations = MigrationConfig()
-    Workout.defaultDatabase = DatabaseIdentifier<MySQLDatabase>.pump as DatabaseIdentifier<MySQLDatabase> 
+    Workout.defaultDatabase = DatabaseIdentifier<MySQLDatabase>.pump as DatabaseIdentifier<MySQLDatabase>
+    Curator.defaultDatabase = DatabaseIdentifier<MySQLDatabase>.pump as DatabaseIdentifier<MySQLDatabase>
+
     migrations.add(migration: Curator.self, database: .pump)
+    migrations.add(model: User.self, database: .pump)
     migrations.add(migration: Workout.self, database: .pump)
     migrations.add(model: Superset.self, database: .pump)
     migrations.add(model: WorkoutSupersetPivot.self, database: .pump)
     migrations.add(model: WorkoutSet.self, database: .pump)
+
+    migrations.add(model: Token.self, database: .pump)
     services.register(migrations)
 
 }

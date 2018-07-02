@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Auth",
+        "repositoryURL": "https://github.com/vapor/auth.git",
+        "state": {
+          "branch": null,
+          "revision": "8c783272bbef7490781e0879ae5e9b5ceced0ec0",
+          "version": "2.0.0-rc.5"
+        }
+      },
+      {
         "package": "Console",
         "repositoryURL": "https://github.com/vapor/console.git",
         "state": {
@@ -56,6 +65,15 @@
         }
       },
       {
+        "package": "FluentSQLite",
+        "repositoryURL": "https://github.com/vapor/fluent-sqlite.git",
+        "state": {
+          "branch": null,
+          "revision": "83075582da7414e5b3cdf179266381dec5a106b0",
+          "version": "3.0.0-rc.4.0.1"
+        }
+      },
+      {
         "package": "HTTP",
         "repositoryURL": "https://github.com/vapor/http.git",
         "state": {
@@ -65,12 +83,12 @@
         }
       },
       {
-        "package": "Models",
-        "repositoryURL": "https://github.com/RichardBlanch/Models.git",
+        "package": "Leaf",
+        "repositoryURL": "https://github.com/vapor/leaf.git",
         "state": {
           "branch": null,
-          "revision": "2226c16f77e862a428ab9cd6a62f40bad2b1741f",
-          "version": "1.0.0"
+          "revision": "a71cb0cd29ec88ee72baa00668c05e327114f27c",
+          "version": "3.0.0-rc.2.2"
         }
       },
       {
@@ -89,6 +107,24 @@
           "branch": null,
           "revision": "b726a2d1c6b0bcc115182e01fb3028351a743045",
           "version": "3.0.0-rc.4.3"
+        }
+      },
+      {
+        "package": "Pagination",
+        "repositoryURL": "https://github.com/vapor-community/pagination.git",
+        "state": {
+          "branch": null,
+          "revision": "91658b8ff9300a196190faaa300b33c5e975783c",
+          "version": "1.0.6"
+        }
+      },
+      {
+        "package": "PumpModels",
+        "repositoryURL": "https://github.com/RichardBlanch/PumpModels.git",
+        "state": {
+          "branch": null,
+          "revision": "9894c28f57430a8a2a91586d1e8a6f68d17bc635",
+          "version": "0.2.9"
         }
       },
       {
@@ -116,6 +152,15 @@
           "branch": null,
           "revision": "f89155dbf3dd48c838f79d28a636bbe32ad38693",
           "version": "2.0.0-beta.3"
+        }
+      },
+      {
+        "package": "SQLite",
+        "repositoryURL": "https://github.com/vapor/sqlite.git",
+        "state": {
+          "branch": null,
+          "revision": "500748e7bd9d19b9beeba5b4bccbe751741eb280",
+          "version": "3.0.0-rc.4.1"
         }
       },
       {

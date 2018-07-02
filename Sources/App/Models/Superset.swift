@@ -7,39 +7,19 @@
 
 import FluentMySQL
 import Vapor
+import PumpModels
 
-final class Superset: Codable {
-    var id: UUID?
-    var identifier: String!
-    var workoutSets: [WorkoutSet]?
+extension Superset: MySQLUUIDModel {}
+extension Superset: Migration {}
+extension Superset: Content {}
+extension Superset: Parameter {}
 
+extension Superset {
     var workouts: Siblings<Superset, Workout, WorkoutSupersetPivot> {
         return siblings()
     }
 
-    init(identifier: String) {
-        self.identifier = identifier
-    }
-}
-
-extension Superset: Equatable {
-    static func == (lhs: Superset, rhs: Superset) -> Bool {
-        return lhs.id == rhs.id && lhs.identifier == rhs.identifier
-    }
-}
-
-extension Superset {
     var childrenWorkoutSets: Children<Superset, WorkoutSet> {
-        return children(\.supersetID)
+        return children(\.superSetIdentification)
     }
 }
-
-
-
-
-
-extension Superset: MySQLUUIDModel {}
-extension Superset: Migration {}
-extension Superset: Content { }
-extension Superset: Parameter { }
-

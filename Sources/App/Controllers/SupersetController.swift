@@ -8,6 +8,7 @@
 import FluentMySQL
 import Vapor
 import Fluent
+import PumpModels
 
 struct SupersetController: RouteCollection {
     func boot(router: Router) throws {
@@ -15,7 +16,7 @@ struct SupersetController: RouteCollection {
 
         superSetRoute.get(use: getAllSupersets)
         superSetRoute.post(Superset.self, use: createSuperset)
-        superSetRoute.get(Superset.parameter, "sets", use: getWorkoutSets)
+        // superSetRoute.get(Superset.parameter, "sets", use: getWorkoutSets)
 
         // Workout routes
         superSetRoute.get(Superset.parameter, "workouts", use: getWorkouts)
@@ -23,7 +24,7 @@ struct SupersetController: RouteCollection {
 
     private func getAllSupersets(_ request: Request) throws -> Future<[Superset]> {
         return request.withPooledConnection(to: .pump, closure: { conn in
-            return conn.query(Superset.self).all()
+            return Superset.query(on: conn).all()
         })
     }
 
@@ -54,12 +55,10 @@ struct SupersetController: RouteCollection {
         return req.withPooledConnection(to: .pump) { conn in
             return try req.parameters.next(Superset.self).flatMap(to: [WorkoutSet].self) { try $0.childrenWorkoutSets.query(on: conn).all() }
         }
-
-//        return try req.parameters(Superset.self).flatMap(to: [WorkoutSet].self) { superSet in
-//            try superSet.workoutSets.query(on: req).all()
-//        }
     }
 }
+
+// MARK: - Routeable
 
 extension SupersetController: Routeable {
     func baseRoute(from router: Router) -> Router {

@@ -8,25 +8,54 @@
 import FluentMySQL
 import Vapor
 import Fluent
+import PumpModels
+import Pagination
+import Crypto
+
+struct NoAuthAbortError: AbortError {
+    let identifier: String = "NoAuthAbortError"
+    let status: HTTPResponseStatus = .networkAuthenticationRequired
+    let headers: HTTPHeaders = HTTPHeaders()
+    let reason: String = "Not Authorized"
+}
 
 struct WorkoutController: RouteCollection {
     func boot(router: Router) throws {
-        let workoutRotes = self.baseRoute(from: router)
+        let workoutRotes = baseRoute(from: router)
+        let tokenAuthWorkoutRoutes = registerBearerAuth(for: workoutRotes)
 
         workoutRotes.get(use: allWorkouts)
         workoutRotes.get(Workout.parameter, "supersets", use: getSupersets)
         workoutRotes.get(Workout.parameter, use: getHandler)
-        workoutRotes.post(Workout.self, use: createWorkout)
         workoutRotes.put(Workout.parameter, use: updateHandler)
         workoutRotes.post(Workout.parameter, "superset", Superset.parameter, use: addSupersetHandler)
         workoutRotes.get(Workout.parameter, "payload", use: workoutPayload)
+        workoutRotes.delete(Workout.parameter, use: deleteHandler)
+
+        // Pagination
+        workoutRotes.get("paginated", use: paginatedWorkouts)
+
+        // Auth
+        tokenAuthWorkoutRoutes.post(Workout.self, use: createWorkout)
+    }
+
+    private func registerBearerAuth(for routes: Router) -> Router {
+        let tokenAuthMiddleware = User.tokenAuthMiddleware()
+        let guardAuthMiddleware = User.guardAuthMiddleware()
+        let tokenAuthGroup = routes.grouped(tokenAuthMiddleware, guardAuthMiddleware)
+
+        return tokenAuthGroup
     }
 
     // MARK: - Handlers
 
+    private func paginatedWorkouts(_ req: Request) throws -> Future<Paginated<Workout>> {
+         return try Workout.query(on: req).paginate(for: req)
+    }
+
     private func allWorkouts(_ req: Request) throws -> Future<[Workout]> {
         return req.withPooledConnection(to: .pump) { conn in
-            return Workout.query(on: conn).all()
+            return Workout.query(on: req).all()
         }
     }
 
@@ -50,6 +79,8 @@ struct WorkoutController: RouteCollection {
 
     private func createWorkout(from req: Request, workout: Workout) throws -> Future<Workout> {
         return req.withPooledConnection(to: .pump) { conn in
+            try req.requireAuthenticated(User.self)
+
             return workout.save(on: conn)
         }
     }
@@ -61,10 +92,9 @@ struct WorkoutController: RouteCollection {
                                req.content.decode(Workout.self)) {
                                 workout, updatedWorkout in
 
-                                workout.name = updatedWorkout.name
-                                workout.bodyPart = updatedWorkout.bodyPart
-                                workout.curatorID = updatedWorkout.curatorID
-                                return workout.save(on: req)
+                                let newWorkout = Workout(id: workout.id!, name: updatedWorkout.name, bodyPart: updatedWorkout.bodyPart, curatorID: updatedWorkout.curatorID)
+
+                                return newWorkout.save(on: req)
             }
         })
     }
@@ -85,6 +115,18 @@ struct WorkoutController: RouteCollection {
                 return pivot.save(on: conn).transform(to: .created)
             })
         })
+    }
+
+    func deleteHandler(_ req: Request) throws -> Future<HTTPStatus> {
+        return req.withPooledConnection(to: .pump, closure: { conn in
+            return try req.parameters.next(Workout.self).delete(on: conn).transform(to: HTTPStatus.noContent)
+        })
+    }
+
+    struct WorkoutCreateData: Content {
+        let name: String
+        let curatorID: UUID
+        let bodyPart: String
     }
 }
 

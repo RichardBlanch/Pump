@@ -8,6 +8,7 @@
 import FluentMySQL
 import Vapor
 import Fluent
+import PumpModels
 
 struct WorkoutSetController: RouteCollection {
     func boot(router: Router) throws {

@@ -1,7 +1,7 @@
 import FluentMySQL
 import Vapor
 import Fluent
-// import Models
+import PumpModels
 
 struct CuratorController: RouteCollection {
     func boot(router: Router) throws {
@@ -9,6 +9,7 @@ struct CuratorController: RouteCollection {
 
         curatorRoutes.get(use: allCurators)
         curatorRoutes.get("first", use: firstCurator)
+        curatorRoutes.put(Curator.parameter, use: updateCurator)
         curatorRoutes.post(Curator.self, use: createCurator)
     }
 
@@ -29,12 +30,29 @@ struct CuratorController: RouteCollection {
         })
     }
 
+    func updateCurator(_ req: Request) throws -> Future<Curator> {
+        return try flatMap(to: Curator.self,
+                           req.parameters.next(Curator.self),
+                           req.content.decode(Curator.self)) {
+                            curator, updatedCurator in
+
+                            var curatorToSave = curator
+                            curatorToSave.name = updatedCurator.name ?? curator.name
+                            curatorToSave.image = updatedCurator.image ?? curator.image
+
+                            return curatorToSave.save(on: req)
+        }
+    }
+
     private func createCurator(from req: Request, curator: Curator) throws -> Future<Curator> {
         return req.withPooledConnection(to: .pump) { conn in
             return curator.save(on: conn)
         }
     }
 }
+
+
+// MARK: - Routeable
 
 extension CuratorController: Routeable {
     func baseRoute(from router: Router) -> Router {

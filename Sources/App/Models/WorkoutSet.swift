@@ -7,27 +7,27 @@
 
 import FluentMySQL
 import Vapor
+import PumpModels
 
-final class WorkoutSet: Codable {
-    var id: UUID?
-    var name: String!
-    var description: String!
-    var bodyPart: String!
-    var supersetID: Superset.ID
-
-    var parentSuperSet: Parent<WorkoutSet, Superset> {
-        return parent(\.supersetID)
+extension WorkoutSet: MySQLUUIDModel {}
+extension WorkoutSet: Migration {
+    public static func prepare(on connection: MySQLConnection) -> Future<Void> {
+        return Database.create(self, on: connection, closure: { builder in
+            try addProperties(to: builder)
+            builder.reference(from: \.superSetIdentification, to: \Superset.id)
+        })
     }
 }
+extension WorkoutSet: Content {}
+extension WorkoutSet: Parameter {}
 
 extension WorkoutSet: Equatable {
-    static func == (lhs: WorkoutSet, rhs: WorkoutSet) -> Bool {
+    var superSet: Parent<WorkoutSet, Superset>? {
+        return parent(\.superSetIdentification)
+    }
+
+    public static func == (lhs: WorkoutSet, rhs: WorkoutSet) -> Bool {
         return lhs.id == rhs.id && lhs.name == rhs.name && lhs.description == rhs.description && lhs.bodyPart == rhs.bodyPart
     }
 }
-
-extension WorkoutSet: MySQLUUIDModel {}
-extension WorkoutSet: Migration {}
-extension WorkoutSet: Content {}
-extension WorkoutSet: Parameter {}
 

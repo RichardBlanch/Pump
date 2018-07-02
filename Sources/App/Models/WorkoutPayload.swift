@@ -7,15 +7,14 @@
 
 import Vapor
 import Fluent
+import PumpModels
 
 struct WorkoutPayload: Content {
-    let workout: Workout
+    let id: UUID?
+    let name: String
+    let curatorID: UUID
+    let bodyPart: String
     let sets: [[WorkoutSet]]
-
-    init(workout: Workout, sets: [[WorkoutSet]]) {
-        self.workout = workout
-        self.sets = sets
-    }
 }
 
 extension Workout {
@@ -24,7 +23,7 @@ extension Workout {
             let futureSets = try supersetter.compactMap({ try $0.childrenWorkoutSets.query(on: conn).all()} )
             let a = futureSets.flatten(on: conn)
             return a.map(to: WorkoutPayload.self, { sets  in
-                return WorkoutPayload(workout: self, sets: sets)
+                return WorkoutPayload(id: self.id, name: self.name, curatorID: self.curatorID, bodyPart: self.bodyPart, sets: sets)
             })
         }
     }
