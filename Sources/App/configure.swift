@@ -20,8 +20,8 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     middlewares.use(ErrorMiddleware.self)
     services.register(middlewares)
     var databases = DatabasesConfig()
-    // Step 3
-    let mysqlConfig = MySQLDatabaseConfig(hostname: "localhost", port: 3306, username: "golden", password: "password", database: "Pump")
+
+    let mysqlConfig = databaseConfig()
     let database = MySQLDatabase(config: mysqlConfig)
     databases.add(database: database, as: .pump)
 
@@ -41,7 +41,15 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
 
     migrations.add(model: Token.self, database: .pump)
     services.register(migrations)
+}
 
+private func databaseConfig() -> MySQLDatabaseConfig {
+    let hostname = Environment.get("DATABASE_HOSTNAME") ?? "localhost"
+    let username = Environment.get("DATABASE_USER") ?? "golden"
+    let databaseName = Environment.get("DATABASE_DB") ?? "Pump"
+    let password = Environment.get("DATABASE_PASSWORD") ?? "password"
+
+     return MySQLDatabaseConfig(hostname: username, port: 3306, username: username, password: password, database: databaseName)
 }
 
 extension DatabaseIdentifier{
