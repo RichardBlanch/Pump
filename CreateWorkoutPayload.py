@@ -14,10 +14,10 @@ r = requests.post(url = WorkoutEndpoint, data = PARAMS)
 pastebin_url = r.text
 
 
-number_of_supersets = int(raw_input('Please enter number of super-sets'))
+number_of_supersets = int(raw_input('Please enter number of super-sets:\t'))
 for x in range(0, number_of_supersets):
     workout_id = json.loads(r.text)['id']
-    superset_identifier_value = raw_input('Input Super Set Identifier!:')
+    superset_identifier_value = raw_input('Input Super Set Identifier!:\t')
 
     super_set_endpoint = "http://localhost:8080/api/superset"
     SUPER_SET_PARAMS = {'identifier': superset_identifier_value }
@@ -33,13 +33,13 @@ for x in range(0, number_of_supersets):
     workout_superset_endpoint = workout_superset_base_url + workout_path + superset_path
     workout_superset_request = requests.post(url = workout_superset_endpoint)
 
-    number_of_sets_for_superset = int(raw_input('Please enter number of sets for this superset'))
+    number_of_sets_for_superset = int(raw_input('Please enter number of sets for this superset:\t'))
     for x in range(0, number_of_sets_for_superset):
         WORKOUT_SET_ENDPOINT = "http://localhost:8080/api/sets/"
 
-        name = raw_input('Please enter name for set... i.e.: Bench Press ')
-        description = raw_input('Please enter set description for set... i.e.: 10, 10, 10, 10, 10 ')
-        bodyPart = raw_input('Please enter set bodyPart for set... i.e.: Chest')
+        name = raw_input('Please enter name for set... i.e.: Bench Press:\t')
+        description = raw_input('Please enter set description for set... i.e.: 10, 10, 10, 10, 10:\t')
+        bodyPart = raw_input('Please enter set bodyPart for set... i.e.: Chest:\t')
 
         SUPER_SET_PARAMS = {'name': name, 'description': description, 'bodyPart': bodyPart, 'superSetIdentification': superset_id}
         workout_set_request = requests.post(url = WORKOUT_SET_ENDPOINT, data = SUPER_SET_PARAMS)
