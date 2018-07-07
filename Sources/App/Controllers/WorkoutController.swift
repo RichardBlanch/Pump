@@ -85,10 +85,13 @@ struct WorkoutController: RouteCollection {
                                req.content.decode(Workout.self)) {
                                 workout, updatedWorkout in
 
-                                
-                                let newWorkout = Workout(id: workout.id!, name: updatedWorkout.name, bodyPart: updatedWorkout.bodyPart, curatorID: updatedWorkout.curatorID, imageURL: updatedWorkout.imageURL)
+                                var workoutToSave = workout
+                                workoutToSave.name = updatedWorkout.name ?? workout.name
+                                workoutToSave.bodyPart = updatedWorkout.bodyPart ?? workout.bodyPart
+                                workoutToSave.curatorID = updatedWorkout.curatorID ?? workout.curatorID
+                                workoutToSave.imageURL = updatedWorkout.imageURL ?? workout.imageURL
 
-                                return newWorkout.save(on: req)
+                                return workoutToSave.save(on: req)
             }
         })
     }
