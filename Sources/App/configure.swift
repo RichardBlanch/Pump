@@ -38,8 +38,8 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: Superset.self, database: .pump)
     migrations.add(model: WorkoutSupersetPivot.self, database: .pump)
     migrations.add(model: WorkoutSet.self, database: .pump)
-
     migrations.add(model: Token.self, database: .pump)
+
     services.register(migrations)
 }
 
