@@ -3,15 +3,17 @@ import argparse
 import json
 
 
+endpoint = "https://rb-pump-development.vapor.cloud"
 workout_name = raw_input('Please enter name for workout:\t')
 workout_curator_id = raw_input('Please enter curator id for workout:\t')
 workout_body_part = raw_input('Please enter body part for this workout:\t')
 
 
-WorkoutEndpoint = "http://localhost:8080/api/workout"
+WorkoutEndpoint = endpoint + "/api/workout"
 PARAMS = {'name': workout_name, 'curatorID': workout_curator_id, 'bodyPart': workout_body_part}
-r = requests.post(url = WorkoutEndpoint, data = PARAMS)
+r = requests.post(url = WorkoutEndpoint, headers={'Authorization': 'Bearer BK2MNvuJTpDd/Dg6X6ri8A=='}, data = PARAMS)
 pastebin_url = r.text
+print(r.text)
 
 
 number_of_supersets = int(raw_input('Please enter number of super-sets:\t'))
@@ -19,14 +21,14 @@ for x in range(0, number_of_supersets):
     workout_id = json.loads(r.text)['id']
     superset_identifier_value = raw_input('Input Super Set Identifier!:\t')
 
-    super_set_endpoint = "http://localhost:8080/api/superset"
+    super_set_endpoint = endpoint + "/api/superset"
     SUPER_SET_PARAMS = {'identifier': superset_identifier_value }
 
     super_set_req = requests.post(url = super_set_endpoint, data = SUPER_SET_PARAMS)
     superset_id = json.loads(super_set_req.text)['id']
 
 
-    workout_superset_base_url = "http://localhost:8080/api/workout"
+    workout_superset_base_url = endpoint + "/api/workout"
     workout_path = "/" + workout_id + "/"
     superset_path = "superset/" + superset_id
 
@@ -35,7 +37,7 @@ for x in range(0, number_of_supersets):
 
     number_of_sets_for_superset = int(raw_input('Please enter number of sets for this superset:\t'))
     for x in range(0, number_of_sets_for_superset):
-        WORKOUT_SET_ENDPOINT = "http://localhost:8080/api/sets/"
+        WORKOUT_SET_ENDPOINT = endpoint + "/api/sets/"
 
         name = raw_input('Please enter name for set... i.e.: Bench Press:\t')
         description = raw_input('Please enter set description for set... i.e.: 10, 10, 10, 10, 10:\t')

@@ -123,8 +123,8 @@
         "repositoryURL": "https://github.com/RichardBlanch/PumpModels.git",
         "state": {
           "branch": null,
-          "revision": "9894c28f57430a8a2a91586d1e8a6f68d17bc635",
-          "version": "0.2.9"
+          "revision": "8b81eff1115ecdde91d8d0e294647c4edef296c2",
+          "version": "0.3.1"
         }
       },
       {
@@ -231,8 +231,8 @@
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
           "branch": null,
-          "revision": "74a46ecacca51d326a1e8cf4b7967827765f05bf",
-          "version": "3.0.5"
+          "revision": "6b07105a3899fbbae194ee3eb82f54debe502221",
+          "version": "3.0.6"
         }
       },
       {

@@ -12,13 +12,6 @@ import PumpModels
 import Pagination
 import Crypto
 
-struct NoAuthAbortError: AbortError {
-    let identifier: String = "NoAuthAbortError"
-    let status: HTTPResponseStatus = .networkAuthenticationRequired
-    let headers: HTTPHeaders = HTTPHeaders()
-    let reason: String = "Not Authorized"
-}
-
 struct WorkoutController: RouteCollection {
     func boot(router: Router) throws {
         let workoutRotes = baseRoute(from: router)
@@ -92,7 +85,7 @@ struct WorkoutController: RouteCollection {
                                req.content.decode(Workout.self)) {
                                 workout, updatedWorkout in
 
-                                let newWorkout = Workout(id: workout.id!, name: updatedWorkout.name, bodyPart: updatedWorkout.bodyPart, curatorID: updatedWorkout.curatorID)
+                                let newWorkout = try Workout(id: workout.requireID(), name: updatedWorkout.name ?? workout.name, bodyPart: updatedWorkout.bodyPart ?? workout.bodyPart, curatorID: updatedWorkout.curatorID ?? workout.curatorID, imageURL: updatedWorkout.imageURL ?? workout.imageURL)
 
                                 return newWorkout.save(on: req)
             }
