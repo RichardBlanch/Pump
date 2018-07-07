@@ -16,10 +16,15 @@ extension Workout {
 extension Workout: MySQLUUIDModel {}
 extension Workout: Migration {
     public static func prepare(on connection: MySQLConnection) -> Future<Void> {
-        return Database.create(self, on: connection, closure: { builder in
-            try addProperties(to: builder)
+        return MySQLDatabase.create(self, on: connection) { builder in
+            builder.field(for: \Workout.id)
+            builder.field(for: \Workout.name)
+            builder.field(for: \Workout.curatorID)
+            builder.field(for: \Workout.bodyPart)
+            builder.field(for: \Workout.imageURL)
+            builder.field(for: \Workout.sets)
             builder.reference(from: \.curatorID, to: \Curator.id)
-        })
+        }
     }
 }
 extension Workout: Content {}
