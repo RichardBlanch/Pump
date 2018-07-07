@@ -85,7 +85,8 @@ struct WorkoutController: RouteCollection {
                                req.content.decode(Workout.self)) {
                                 workout, updatedWorkout in
 
-                                let newWorkout = try Workout(id: workout.requireID(), name: updatedWorkout.name ?? workout.name, bodyPart: updatedWorkout.bodyPart ?? workout.bodyPart, curatorID: updatedWorkout.curatorID ?? workout.curatorID, imageURL: updatedWorkout.imageURL ?? workout.imageURL)
+                                
+                                let newWorkout = Workout(id: workout.id!, name: updatedWorkout.name, bodyPart: updatedWorkout.bodyPart, curatorID: updatedWorkout.curatorID, imageURL: updatedWorkout.imageURL)
 
                                 return newWorkout.save(on: req)
             }
